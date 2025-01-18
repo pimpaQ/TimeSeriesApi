@@ -5,7 +5,7 @@ namespace timescale.Data
 {
     public class AppDbContext : DbContext
     {
-        public DbSet<Value> Values { get; set; }
+        public DbSet<Value> Value { get; set; }
         public DbSet<Models.Results> Results { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
