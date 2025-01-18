@@ -203,5 +203,37 @@ namespace timescale.Controllers
                 return BadRequest($"Ошибка получения данных: {ex.Message}");
             }
         }
+
+        [HttpGet("last-values")]
+        public async Task<IActionResult> GetLastValues(string fileName)
+        {
+            if (string.IsNullOrWhiteSpace(fileName))
+            {
+                return BadRequest("Имя файла не может быть пустым.");
+            }
+
+            try
+            {
+                // Запрос к таблице Values для получения последних 10 значений по имени файла
+                var lastValues = await _context.Value
+                    .Where(v => v.FileName == fileName)
+                    .OrderByDescending(v => v.Date) // Сортировка по убыванию даты
+                    .Take(10) // Ограничение до 10 записей
+                    .OrderBy(v => v.Date) // Пересортировка по возрастанию даты
+                    .ToListAsync();
+
+                if (!lastValues.Any())
+                {
+                    return NotFound("Для указанного файла записи не найдены.");
+                }
+
+                return Ok(lastValues);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Ошибка получения данных: {ex.Message}");
+            }
+        }
+
     }
 }
